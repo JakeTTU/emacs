@@ -14,7 +14,6 @@
 
 (load-theme 'tango-dark)
 
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -41,8 +40,19 @@
 (setq use-package-always-ensure t)
 
 
-(use-package command-log-mode)
+;; Add line numbers
+(column-number-mode)
+(global-display-line-numbers-mode t)
 
+;; Disable line numbers ofr some modes
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		shell-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-number-mode 0))))
+
+
+(use-package command-log-mode)
 
 (use-package ivy
   :diminish
@@ -62,16 +72,45 @@
   :config
   (ivy-mode 1))
 
-
-(use-package counsel)
-
 (use-package doom-modeline
-  :ensure t
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
+  :custom ((doom-modeline-height 20)))
 
-(use-package magit
-  :ensure t)
+(use-package doom-themes)
+
+(use-package magit)
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
+	 ("C-x C-f" . counsel-find-file)
+	 :map minibuffer-local-map
+	 ("C-r" . 'counsel-minibuffer-history))
+  :config
+  (setq ivy-initial-inputs-alist nil))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-varable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
 
 
 (custom-set-variables
@@ -79,7 +118,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(magit doom-modeline counsel ivy command-log-mode)))
+ '(package-selected-packages
+   '(doom-themes helpful ivy-rich which-key rainbow-delimiters magit doom-modeline counsel ivy command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
