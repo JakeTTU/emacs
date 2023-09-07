@@ -1,0 +1,76 @@
+* First Heading
+
+* Inserted Directly Below
+
+<alt>+<enter> adds heading directly below heading
+
+<alt>+<up> or <alt>+<down> reorders the selected content
+
+<alt>+<shift>+<up> or <alt>+<shift>+<down> moves the selected content up or down one line
+
+Hers is *some* content!
+
+Here is the [[https://orgmode.org][Org Mode homepage]]
+
+M-x org-insert-link adds a link to the selected text
+
+** Sub-Heading
+
+Add some more content!!
+
+* Inserted Headings at bottom of heading
+
+<ctrl>+<enter> adds heading at the bottom of the selected heading
+
+* Second Heading
+** Tables
+
+| Name | Age | Uses Emacs |
+| Me   |  18 | YES        |
+|      |     |            |
+|      |     |            |
+|      |     |            |
+
+<shift> alligns the table automatically
+
+** Lists
+*** Un-numbered
+
+- First item
+- Second item
+- Thrid item
+
+<alt>+<enter> creates a new line in the list
+
+*** Numbered
+
+1. First item
+2. Second item
+3. Third item
+
+*** Check Lists
+
+- [X] First item
+- [ ] Second item
+- [ ] Third item
+
+C-c C-x C-b checks an item
+
+<shift>+<alt>+<enter> adds a new checkbox item 
+
+** Source Blocks
+
+#+begin_src emacs-lisp
+
+  (defun my-elisp-func()
+    (message "Hello!")
+
+#+end_src
+
+* TODO Heading
+
+<shift>+<left> or <shift>+<right> cycles through the tags for headings
+
+
+
+
