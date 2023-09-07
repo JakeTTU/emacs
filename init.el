@@ -48,7 +48,6 @@
 ;; Disable line numbers ofr some modes
 (dolist (mode '(org-mode-hook
 		term-mode-hook
-		shell-mode-hook
 		eshell-mode-hook))
   (add-hook mode (lambda () (display-line-number-mode 0))))
 
@@ -77,11 +76,10 @@
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 20)))
+  :custom
+  (doom-modeline-height 30))
 
 (use-package doom-themes)
-
-(use-package magit)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -118,12 +116,12 @@
 
 (use-package general
   :config
-  (general-create-definer rune/leader-keys
+  (general-create-definer emacs/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (rune/leader-keys
+  (emacs/leader-keys
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -158,29 +156,37 @@
 	  ("k" text-scale-decrease "out")
 	  ("f" nil "finished" :exit t))
 
-(rune/leader-keys
+(emacs/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale-text"))
 
-
-(rune/leader-keys
+(emacs/leader-keys
   "g"  '(:ignore t :which-key "git")
   "gs" '(magit-status :which-key "git status"))
 
+(emacs/leader-keys
+  "kb" '(kill-buffer-and-window :which-key "kill buffer")) 
 
-  
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/projects")
+    (setq projectile-project-search-path '("~/projects")))
+  (setq projectile-switch-project-action #'projectile-dired))
 
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(rune hydra evil-collection evil general all-the-icons doom-themes helpful ivy-rich which-key rainbow-delimiters magit doom-modeline counsel ivy command-log-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;(use-package evil-magit
+;  :after magit)
+
+(setq auth-sources '("~/.authinfo"))
+
+(use-package forge)

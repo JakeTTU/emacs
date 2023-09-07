@@ -11,3 +11,5 @@ transient
 .#*
 
 ~*
+
+forge-database.sqlite
