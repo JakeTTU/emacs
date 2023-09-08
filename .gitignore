@@ -1,17 +1,14 @@
-*.DS_Store
 
 auto-save-list
-
 elpa
-
 transient
 
+*.DS_Store
 #*.*#
-
 *~
-
 .#*
-
 ~*
 
 forge-database.sqlite
+projectile-bookmarks.eld
+

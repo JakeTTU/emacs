@@ -129,10 +129,10 @@
 
   (emacs/leader-keys
    "t"   '(:ignore t :which-key "toggles")
-   "t t" '(counsel-load-theme :which-key "choose theme")
+   "t m" '(counsel-load-theme :which-key "choose theme")
    "t s" '(hydra-text-scale/body :which-key "scale-text")
-   "t n" '(neotree-toggle :which-key "Toggle neotree file viewer")
-   "t v" '(vterm-toggle :which-key "Toggle vterm")))
+   "t f" '(neotree-toggle :which-key "neotree file viewer")
+   "t t" '(vterm-toggle :which-key "vterm")))
 
 (use-package evil
   :init
@@ -194,9 +194,13 @@
 ;(use-package evil-magit
 ;  :after magit)
 
+
+
 (setq auth-sources '("~/.authinfo"))
 
 (use-package forge)
+
+(setq transient-default-level 5)
 
 (defun emacs/org-mode-setup ()
   (org-indent-mode)
@@ -278,7 +282,8 @@
         neo-window-width 30
         neo-window-fixed-size nil
         inhibit-compacting-font-caches t
-        projectile-switch-project-action 'neotree-projectile-action) 
+        projectile-switch-project-action 'neotree-projectile-action
+	neo-theme (if (display-graphic-p) 'icons)) 
         ;; truncate long file names in neotree
         (add-hook 'neo-after-create-hook
            #'(lambda (_)
@@ -287,7 +292,6 @@
                  (setq word-wrap nil)
                  (make-local-variable 'auto-hscroll-mode)
                  (setq auto-hscroll-mode nil)))))
-
 
 (use-package vterm
 :config
@@ -312,6 +316,11 @@
                   ;;(dedicated . t) ;dedicated is supported in emacs27
                   (reusable-frames . visible)
                   (window-height . 0.3))))
+
+
+(use-package typescript-mode
+  :config (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
+
 
 
 
