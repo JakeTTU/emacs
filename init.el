@@ -6,8 +6,16 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (set-fringe-mode -1)
-
 (menu-bar-mode -1)
+(recentf-mode 1)
+(savehist-mode 1)
+(save-place-mode 1)
+
+
+(setq history-length 25)
+
+
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 ;; Set up the visible bell
 (setq visible-bell t)
@@ -132,7 +140,8 @@
    "t m" '(counsel-load-theme :which-key "choose theme")
    "t s" '(hydra-text-scale/body :which-key "scale-text")
    "t f" '(neotree-toggle :which-key "neotree file viewer")
-   "t t" '(vterm-toggle :which-key "vterm")))
+   "t t" '(vterm-toggle :which-key "vterm")
+   "t r" '(recentf-open :which-key "recent files")))
 
 (use-package evil
   :init
@@ -144,11 +153,9 @@
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
@@ -166,12 +173,17 @@
 	  ("f" nil "finished" :exit t))
 
 (emacs/leader-keys
-  "g"  '(:ignore t :which-key "git")
-  "gs" '(magit-status :which-key "git status"))
+  "g"   '(:ignore t :which-key "git")
+  "g s" '(magit-status :which-key "git status"))
 
 (emacs/leader-keys
-  "k"  '(:ignore t :which-key "kill")
-  "kb" '(kill-buffer-and-window :which-key "kill buffer")) 
+  "k"   '(:ignore t :which-key "kill")
+  "k b" '(kill-buffer-and-window :which-key "kill buffer"))
+
+(emacs/leader-keys
+  "j"   '(:ignore t :which-key "escape")
+  "j k" '(evil-force-normal-state :which-key "mode"))
+
 
 (use-package projectile
   :diminish projectile-mode
@@ -193,8 +205,6 @@
 
 ;(use-package evil-magit
 ;  :after magit)
-
-
 
 (setq auth-sources '("~/.authinfo"))
 

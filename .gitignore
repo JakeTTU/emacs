@@ -9,6 +9,10 @@ transient
 .#*
 ~*
 
+history
+places
+recentf
+
 forge-database.sqlite
 projectile-bookmarks.eld
 
