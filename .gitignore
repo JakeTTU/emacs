@@ -1,10 +1,11 @@
 
-auto-save-list
+auto-save-lis
 elpa
 transient
 
 *.DS_Store
 #*.*#
+#*
 *~
 .#*
 ~*

@@ -10,12 +10,10 @@
 (recentf-mode 1)
 (savehist-mode 1)
 (save-place-mode 1)
+(global-auto-revert-mode 1)
 
-
+(setq use-dialog-box nil)
 (setq history-length 25)
-
-
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 ;; Set up the visible bell
 (setq visible-bell t)
@@ -32,11 +30,6 @@
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-
-;; Map Option key to act as Alt
-;; (setq mac-option-modifer 'meta)
-;; (global-set-key (kbd "M-<") 'event-apply-meta-modifier)
 
 ;; Initialize package sources
 (require 'package)
@@ -91,7 +84,7 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom
-  (doom-modeline-height 30))
+  (doom-modeline-height 35))
 
 (use-package doom-themes)
 
@@ -183,6 +176,11 @@
 (emacs/leader-keys
   "j"   '(:ignore t :which-key "escape")
   "j k" '(evil-force-normal-state :which-key "mode"))
+
+(emacs/leader-keys
+  "b"   '(:ignore t :which-key "buffer")
+  "b k" '(kill-buffer-and-window :which-key "kill buffer")
+  "b s" '(counsel-switch-buffer :which-key "switch buffer"))
 
 
 (use-package projectile
@@ -287,21 +285,36 @@
 
 (use-package neotree
   :config
-  (setq neo-smart-open t
+  (setq neo-autorefresh t
+        neo-smart-open t
         neo-show-hidden-files t
-        neo-window-width 30
-        neo-window-fixed-size nil
+        neo-window-width 20
+        neo-window-fixed-size 20
         inhibit-compacting-font-caches t
         projectile-switch-project-action 'neotree-projectile-action
-	neo-theme (if (display-graphic-p) 'icons)) 
-        ;; truncate long file names in neotree
-        (add-hook 'neo-after-create-hook
-           #'(lambda (_)
-               (with-current-buffer (get-buffer neo-buffer-name)
-                 (setq truncate-lines t)
-                 (setq word-wrap nil)
-                 (make-local-variable 'auto-hscroll-mode)
-                 (setq auto-hscroll-mode nil)))))
+        neo-theme (if (display-graphic-p) 'icons))
+
+  ;; Define a custom face for NeoTree
+  (defface neotree-face
+    '((t (:height 0.8)))
+    "Custom face for NeoTree buffer.")
+
+  ;; Truncate long file names in NeoTree and apply the custom face
+  (add-hook 'neo-after-create-hook
+            (lambda (_)
+              (with-current-buffer (get-buffer neo-buffer-name)
+                (setq truncate-lines t)
+                (setq word-wrap nil)
+                (make-local-variable 'auto-hscroll-mode)
+                (setq auto-hscroll-mode nil)
+                (buffer-face-set 'neotree-face)))))
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+	    (set-frame-parameter (selected-frame) 'alpha '(95 . 85))
+	    (toggle-frame-maximized)
+            (neotree-toggle)))
+
 
 (use-package vterm
 :config
@@ -331,20 +344,6 @@
 (use-package typescript-mode
   :config (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
+(setq custom-file (locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
 
-
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(vterm-toggle vterm dired-hide-dotfiles all-the-icons-dired dired-single which-key visual-fill-column rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode all-the-icons)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
