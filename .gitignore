@@ -1,9 +1,14 @@
 
-auto-save-lis
-elpa
-transient
+/auto-save-lis
+/elpa
+/transient
+/.trash
+**/.trash
+
 
 *.DS_Store
+**/.DS_Store
+
 #*.*#
 #*
 *~

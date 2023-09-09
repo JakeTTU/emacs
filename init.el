@@ -2,22 +2,25 @@
 
 (defvar emacs/default-font-size 180)
 
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(set-fringe-mode -1)
-(menu-bar-mode -1)
-(recentf-mode 1)
-(savehist-mode 1)
-(save-place-mode 1)
-(global-auto-revert-mode 1)
+(scroll-bar-mode -1)		;; Disable scroll-bar
+(tool-bar-mode -1)		;; Disable tool-bar	
+(tooltip-mode -1)		;; Disable tooltip
+(set-fringe-mode -1)		;; Disable fringes (blank spaces) on left and right of text area.		
+(menu-bar-mode -1)		;; Disable menu bar
+(recentf-mode 1)		;; Remember which files have been recently opened
+(savehist-mode 1)		;; Save history of minibuffer inputs
+(save-place-mode 1)		;; Remember previous cursor position when opening a file
+(global-auto-revert-mode 1)	;; Automatically detect and update buffer to relect changes to files on disk
+(electric-pair-mode 1)		;; Turn on automatic parens pairing
+(delete-selection-mode 1)	;; Delete selected text by typing
 
-(setq use-dialog-box nil)
-(setq history-length 25)
+(setq use-dialog-box nil)	;; Do not show questions in a dialog box
+(setq history-length 25)	;; Limit history to 25 items
+(setq visible-bell t)		;; Set up the visible bell
 
-;; Set up the visible bell
-(setq visible-bell t)
 
+
+;; Set the default face
 (set-face-attribute 'default nil :font "Fira Code Retina" :height emacs/default-font-size)
 
 ;; Set the fixed pitch face
@@ -27,17 +30,15 @@
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'regular)
 
 (load-theme 'doom-dracula t)
-
+		
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 ;; Initialize package sources
 (require 'package)
-
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
-
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
@@ -45,7 +46,6 @@
 ;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
-
 (require 'use-package)
 (setq use-package-always-ensure t)
 
@@ -146,6 +146,7 @@
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-insert-state-map (kbd "TAB") (lambda () (interactive) (insert "\t")))
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -347,3 +348,19 @@
 (setq custom-file (locate-user-emacs-file "custom-vars.el"))
 (load custom-file 'noerror 'nomessage)
 
+;; (setq backup-directory-alist '((".*" . (concat (projectile-project-root) ".trash/"))))
+;; Handle temp and backup files to declutter working directory
+(defun move-unwanted-files-to-trash ()
+  "Move files ending in * or ~ or # to a .trash directory in the current project root."
+  (interactive)
+  (let ((trash-dir (concat (projectile-project-root) ".trash/")))
+    (unless (file-exists-p trash-dir)
+      (make-directory trash-dir t))
+    (dolist (file (directory-files default-directory nil "\\*\\|~\\|#"))
+      (rename-file file (expand-file-name file trash-dir) t))))
+
+(global-set-key (kbd "C-c t") 'move-unwanted-files-to-trash)		;; Move backup files to .trash with command
+(add-hook 'evil-normal-state-entry-hook 'move-unwanted-files-to-trash)	;; Move backup files to .trash on normal-mode-entry
+(add-hook 'evil-insert-state-entry-hook 'move-unwanted-files-to-trash)	;; Move backup files to .trash on insert-mode-entry
+(add-hook 'evil-visual-state-entry-hook 'move-unwanted-files-to-trash)	;; Move backup files to .trash on visual-mode-entry
+(add-hook 'before-save-hook 'move-unwanted-files-to-trash)		;; Move backup files to .trash on save   
