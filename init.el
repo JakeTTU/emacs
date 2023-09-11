@@ -1,11 +1,11 @@
 (setq inhibit-startup-message t)
 
-(defvar emacs/default-font-size 180)
+(defvar emacs/default-font-size 140)
 
 (scroll-bar-mode -1)		;; Disable scroll-bar
 (tool-bar-mode -1)		;; Disable tool-bar	
 (tooltip-mode -1)		;; Disable tooltip
-(set-fringe-mode -1)		;; Disable fringes (blank spaces) on left and right of text area.		
+(set-fringe-mode 15)		;; Disable fringes (blank spaces) on left and right of text area		
 (menu-bar-mode -1)		;; Disable menu bar
 (recentf-mode 1)		;; Remember which files have been recently opened
 (savehist-mode 1)		;; Save history of minibuffer inputs
@@ -14,20 +14,22 @@
 (electric-pair-mode 1)		;; Turn on automatic parens pairing
 (delete-selection-mode 1)	;; Delete selected text by typing
 
+
 (setq use-dialog-box nil)	;; Do not show questions in a dialog box
 (setq history-length 25)	;; Limit history to 25 items
 (setq visible-bell t)		;; Set up the visible bell
 
-
+(setq tab-width 4)			;; Set tab-width to 4 spaces
+	
 
 ;; Set the default face
 (set-face-attribute 'default nil :font "Fira Code Retina" :height emacs/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 180)
+(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 1.05)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 1.05 :weight 'regular)
 
 (load-theme 'doom-dracula t)
 		
@@ -57,7 +59,7 @@
 (dolist (mode '(org-mode-hook
 		term-mode-hook
 		eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-number-mode nil))))
+  (add-hook mode (lambda () (display-line-numbers-mode -1))))
 
 (use-package command-log-mode)
 
@@ -183,6 +185,9 @@
   "b k" '(kill-buffer-and-window :which-key "kill buffer")
   "b s" '(counsel-switch-buffer :which-key "switch buffer"))
 
+(emacs/leader-keys
+  "h"   '(:ignore t :which-key "help")
+  "h k" '(Helper-describe-bindings :which-key "key bindings"))
 
 (use-package projectile
   :diminish projectile-mode
@@ -212,9 +217,11 @@
 (setq transient-default-level 5)
 
 (defun emacs/org-mode-setup ()
-  (org-indent-mode)
+  (org-indent-mode 1)
   (variable-pitch-mode 1)
-  (visual-line-mode 1))
+  (visual-line-mode 1)
+  (setq org-indent-indentation-per-level 3)
+  (setq org-adapt-indentation t))
 
 (defun emacs/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -227,16 +234,16 @@
                   (org-level-2 . 1.1)
                   (org-level-3 . 1.05)
                   (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
+                  (org-level-5 . 1.0)
+		  (org-level-6 . 1.0)
+                  (org-level-7 . 1.0)
+                  (org-level-8 . 1.0)))
     (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-block nil 	:inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   	:inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   	:inherit '(shadow fixed-pitch))
   (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
   (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
@@ -254,14 +261,13 @@
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(use-package visual-fill-column
-  :hook (org-mode . emacs/org-mode-visual-fill))
-
 (defun emacs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 150
+  (setq visual-fill-column-width 200
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
+(use-package visual-fill-column
+  :hook (org-mode . emacs/org-mode-visual-fill))
 
 (use-package dired
   :ensure nil
@@ -270,8 +276,10 @@
   ; :custom (dired-listing-switches "-agho --group-directories-first")
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-find-file))
+    "h"  	'dired-single-up-directory
+    "l"		'dired-single-find-file
+    "d"		'dired-create-directory
+    "f"		'dired-create-empty-file))
 
 (use-package dired-single)
 
@@ -364,3 +372,33 @@
 (add-hook 'evil-insert-state-entry-hook 'move-unwanted-files-to-trash)	;; Move backup files to .trash on insert-mode-entry
 (add-hook 'evil-visual-state-entry-hook 'move-unwanted-files-to-trash)	;; Move backup files to .trash on visual-mode-entry
 (add-hook 'before-save-hook 'move-unwanted-files-to-trash)		;; Move backup files to .trash on save   
+
+;(use-package ob-ipython)
+(use-package ein)
+
+
+(defvar ein-notebook-keybindings
+  '(("C-c C-d" . ein:worksheet-delete-cell)))
+
+ (add-hook 'ein:notebook-mode-hook
+          (lambda ()
+            (dolist (binding ein-notebook-keybindings)
+              (define-key ein:notebook-mode-map (kbd (car binding)) (cdr binding)))))
+
+(setq ein:output-area-inlined-images t)
+
+;
+;(org-babel-do-load-languages
+; 'org-babel-load-languages
+; '(
+;   (emacs-lisp . t)
+;   (python . t)
+;   (ein .t)
+;   ))
+;
+;
+;(add-to-list 'org-structure-template-alist
+;             '("p" . "src python :results output\n\n"))
+;
+;(setq org-confirm-babel-evaluate nil)
+

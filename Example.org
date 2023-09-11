@@ -31,14 +31,14 @@ Add some more content!!
 |      |     |            |
 |      |     |            |
 
-<shift> alligns the table automatically
+<shift> aligns the table automatically
 
 ** Lists
 *** Un-numbered
 
 - First item
 - Second item
-- Thrid item
+- Third item
 
 <alt>+<enter> creates a new line in the list
 
