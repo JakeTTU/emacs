@@ -387,7 +387,12 @@
 
 (setq ein:output-area-inlined-images t)
 
-;
+(with-eval-after-load "magit-rebase"
+  (magit-define-popup-option 'magit-rebase-popup
+    ?S "gpg sign" "--gpg-sign=" #'read-from-minibuffer))
+
+;;
+
 ;(org-babel-do-load-languages
 ; 'org-babel-load-languages
 ; '(
