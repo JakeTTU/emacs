@@ -18,8 +18,10 @@
 history
 places
 recentf
+bookmarks
 
 forge-database.sqlite
 projectile-bookmarks.eld
 
 /request
+/org-files
